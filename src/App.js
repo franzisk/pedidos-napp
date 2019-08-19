@@ -6,7 +6,7 @@ import Header from "./components/Header/Header";
 import axios from "axios";
 import "materialize-css/dist/css/materialize.min.css";
 
-const API_ROOT = "http://localhost:8080/";
+const API_ROOT = "https://intense-brook-31336.herokuapp.com/";
 const REQUEST_HEADERS = {
    headers: {
       "Content-Type": "application/json; charset=utf-8",
