@@ -1,6 +1,6 @@
 import React from "react";
 import { ProgressBar, Navbar, Button, Icon } from "react-materialize";
-import logo from "../../logo.svg";
+import logo from "../../logo.png";
 
 const styleProgress = {
    margin: "0",
@@ -17,10 +17,20 @@ class Header extends React.Component {
          adicionarPedidoHandler,
          showProgress,
       } = this.props;
-      let Img = <img src={logo} style={{ maxWidth: 80, maxHeight: 80 }} />;
+      let Img = (
+         <img
+            src={logo}
+            style={{
+               maxWidth: 100,
+               maxHeight: 100,
+               marginTop: 16,
+               marginLeft: 10,
+            }}
+         />
+      );
       return (
          <>
-            <Navbar brand={Img} alignLinks="right">
+            <Navbar brand={Img} alignLinks="right" className="grey">
                <Button
                   node="a"
                   small

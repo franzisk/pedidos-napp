@@ -5,8 +5,8 @@ import Header from "./components/Header/Header";
 import axios from "axios";
 import "materialize-css/dist/css/materialize.min.css";
 
-const API_ROOT = "http://localhost:8080/";
-//const API_ROOT = "https://intense-brook-31336.herokuapp.com/";
+//const API_ROOT = "http://localhost:8080/";
+const API_ROOT = "https://intense-brook-31336.herokuapp.com/";
 const REQUEST_HEADERS = {
    headers: {
       "Content-Type": "application/json; charset=utf-8",
@@ -33,17 +33,20 @@ class App extends React.Component {
       };
    }
 
+   // mostrar a tela de editar/adicionar pedido
    editarPedidoHandler = (item) => {
       this.setState({ aviso: null });
       this.setState({ pedido: item });
       this.setState({ showEdit: true });
    };
 
+   // listar todos os pedidos cadastrados (em um ambiente real usaria paginação)
    listarPedidosHandler = () => {
       this.setState({ showEdit: false });
       this.carregarPedidosCadastrados();
    };
 
+   // adicionar um pedido em "branco"
    adicionarPedidoHandler = () => {
       let pedido = {
          id: null,
@@ -55,6 +58,7 @@ class App extends React.Component {
       this.setState({ showEdit: true });
    };
 
+   // selecionar um cliente para o pedido
    selecionarClienteHandler = (idCliente) => {
       let cliente = this.state.clientes.filter(
          (obj) => parseInt(obj.id, 10) === parseInt(idCliente, 10)
@@ -64,6 +68,7 @@ class App extends React.Component {
       this.setState({ pedido: _pedido });
    };
 
+   // selecionar um produto para o tem do pedido
    selecionarProdutoHandler = (indexItemPedido, idProduto) => {
       this.setState({ aviso: null });
       let produto = this.state.produtos.filter(
@@ -88,6 +93,7 @@ class App extends React.Component {
       }
    };
 
+   // verificar se no pedido existe itens com produtos repetidos
    isProdutoDuplicado(pedido) {
       let totalDuplicados = 0;
       let temp = [];
@@ -107,6 +113,7 @@ class App extends React.Component {
       return totalDuplicados > 0;
    }
 
+   // formatar o valor com casas decimais a mostrar na tela
    formatarValor = (number) => {
       let postComma;
       let preComma;
@@ -134,6 +141,7 @@ class App extends React.Component {
       return "" + preComma + "," + postComma;
    };
 
+   // verificações ao manipular o campo quantidade
    quantidadeHandler = (indexItemPedido, quantidade) => {
       this.setState({ aviso: null });
       let pedido = this.state.pedido;
@@ -176,6 +184,7 @@ class App extends React.Component {
       this.setState({ pedido: pedido });
    };
 
+   // verificacões ao alterar o preço unitário
    precoUnitarioHandler = (indexItemPedido, valor) => {
       let pedido = this.state.pedido;
       let itemPedido = pedido.itens[indexItemPedido];
@@ -205,6 +214,7 @@ class App extends React.Component {
       this.setState({ pedido: pedido });
    };
 
+   // calcular o valor total do pedido
    calcaularValorTotalPedido = (pedido) => {
       let total = 0.0;
       pedido.itens.forEach((item, index) => {
@@ -214,6 +224,7 @@ class App extends React.Component {
       return pedido;
    };
 
+   // calcular o tipo da rentabilidade
    calcularRentabilidade = (precoProduto, precoVenda) => {
       let x = 0;
       if (precoVenda > precoProduto) {
@@ -229,6 +240,7 @@ class App extends React.Component {
       return x;
    };
 
+   // excluir um item do pedido
    deletarItemPedidoHandler = (indexItemPedido) => {
       let pedido = this.state.pedido;
       let itensPedido = pedido.itens;
@@ -259,6 +271,7 @@ class App extends React.Component {
          });
    };
 
+   // adicionar um item ao pedido (para efeitos didaticos ja preenche com alguns dados)
    adicionarItemAoPedidoHandler = () => {
       this.setState({ aviso: null });
       let item = {
@@ -275,6 +288,7 @@ class App extends React.Component {
       this.setState({ pedido: pedido });
    };
 
+   // verifica se no pedido tem item com rentabilidade ruim
    verificarRentabilidadeRuim = (pedido) => {
       const ruins = pedido.itens.filter(
          (item, index) => item.rentabilidade === 0
@@ -282,6 +296,7 @@ class App extends React.Component {
       return ruins.length > 0;
    };
 
+   // salvar o pedido na API
    salvarPedidoHandler = (event) => {
       this.setState({ aviso: null });
       const { pedido } = this.state;
@@ -322,6 +337,7 @@ class App extends React.Component {
          });
    };
 
+   // carregar os pedidos cadastrados na API
    carregarPedidosCadastrados = () => {
       this.setState({ showProgress: true });
       axios
@@ -335,10 +351,22 @@ class App extends React.Component {
          })
          .catch((error) => {
             this.setState({ showProgress: false });
-            console.error("ERRO GERAL", error.response);
+            if (error.response) {
+               // foi feito o request e o servidor respondeu com um status code fora do range 2xx
+               console.log(error.response.data);
+               console.log(error.response.status);
+               console.log(error.response.headers);
+            } else if (error.request) {
+               // o request foi feito e nenhuma resposta foi recebida
+               console.log(error.request);
+            } else {
+               // Algo foi feito errado na requisição que gerou esse erro
+               console.log("Erro geral", error.message);
+            }
          });
    };
 
+   // carregar o clientes pre-cadastrados
    carregarClientesCadastrados = () => {
       axios
          .get(`${API_ROOT}cliente/listar`, REQUEST_HEADERS)
@@ -357,6 +385,7 @@ class App extends React.Component {
          });
    };
 
+   // carregar os produtos pre-cadastrados
    carregarProdutosCadastrados = () => {
       axios
          .get(`${API_ROOT}produto/listar`, REQUEST_HEADERS)
@@ -378,6 +407,7 @@ class App extends React.Component {
    componentDidMount() {
       this._isMounted = true;
 
+      // No inicio carrega todos os dados
       this.carregarPedidosCadastrados();
       this.carregarClientesCadastrados();
       this.carregarProdutosCadastrados();
@@ -387,6 +417,7 @@ class App extends React.Component {
       this._isMounted = false;
    }
 
+   // excluir um pedido na API
    excluirPedidoHandler = (item) => {
       this.setState({ showProgress: true });
       axios
