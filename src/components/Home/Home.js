@@ -25,9 +25,10 @@ class Home extends React.Component {
 
    itensPedidos = () => {
       const elements = [];
+      const { pedidos, editarPedidoHandler } = this.props;
 
-      if (this.props.pedidos !== undefined) {
-         for (const [index, item] of this.props.pedidos.entries()) {
+      if (pedidos !== undefined) {
+         for (const [index, item] of pedidos.entries()) {
             elements.push(
                <tr key={index + 1}>
                   <td>{item.id}</td>
@@ -59,7 +60,7 @@ class Home extends React.Component {
                         style={{ marginLeft: "5px" }}
                         waves="light"
                         onClick={() => {
-                           this.props.editarPedidoHandler(item);
+                           editarPedidoHandler(item);
                         }}
                         tooltip="Editar pedido"
                         className="green"
@@ -97,18 +98,18 @@ class Home extends React.Component {
       );
    };
    render() {
+      const { showProgress, pedido, excluirPedidoHandler } = this.props;
+
       return (
          <div itemID="box-containner">
             <Modal
                titulo={
-                  this.state.pedido === null
-                     ? ""
-                     : "Pedido No." + this.state.pedido.id
+                  this.state.pedido === null ? "" : "Pedido No." + pedido.id
                }
                conteudo={this.state.conteudoModal}
-               excluirPedidoHandler={this.excluirPedidoHandler}
+               botaoConfirmarHandler={() => excluirPedidoHandler(pedido)}
             />
-            {!this.props.showProgress ? this.listaPedidos() : null}
+            {!showProgress ? this.listaPedidos() : null}
          </div>
       );
    }

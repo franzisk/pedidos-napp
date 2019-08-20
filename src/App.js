@@ -5,7 +5,8 @@ import Header from "./components/Header/Header";
 import axios from "axios";
 import "materialize-css/dist/css/materialize.min.css";
 
-const API_ROOT = "https://intense-brook-31336.herokuapp.com/";
+const API_ROOT = "http://localhost:8080/";
+//const API_ROOT = "https://intense-brook-31336.herokuapp.com/";
 const REQUEST_HEADERS = {
    headers: {
       "Content-Type": "application/json; charset=utf-8",
@@ -232,35 +233,28 @@ class App extends React.Component {
       let pedido = this.state.pedido;
       let itensPedido = pedido.itens;
       this.setState({ aviso: null });
-
       const itemDeletar = itensPedido[indexItemPedido];
-
       itensPedido.splice(indexItemPedido, 1);
-
       pedido.itens = itensPedido;
-
       this.setState({ pedido: pedido });
-
       if (itemDeletar.id === null) {
          return;
       }
 
+      this.setState({ showProgress: true });
       axios
          .delete(
             `${API_ROOT}pedido/deletar-item/${itemDeletar.id}`,
             REQUEST_HEADERS
          )
-         .then(
-            (response) => {
-               if (response.status === 200) {
-                  this.setState({ pedido: pedido });
-               }
-            },
-            (error) => {
-               console.error("PRIMEIRO ERRO", error);
+         .then((response) => {
+            this.setState({ showProgress: false });
+            if (response.status === 200) {
+               this.setState({ pedido: pedido });
             }
-         )
+         })
          .catch((error) => {
+            this.setState({ showProgress: false });
             console.error("ERRO GERAL", error.response);
          });
    };
@@ -317,6 +311,7 @@ class App extends React.Component {
       axios
          .post(`${API_ROOT}pedido/salvar`, this.state.pedido, REQUEST_HEADERS)
          .then((response) => {
+            this.setState({ showProgress: false });
             this.setState({ pedido: response.data });
             this.setState({ showEdit: false });
             this.carregarPedidosCadastrados();
@@ -390,20 +385,22 @@ class App extends React.Component {
 
    componentWillUnmount() {
       this._isMounted = false;
-      this.setState({ showModalConfirmaDelete: false });
    }
 
-   acaoDeletar = (deletar) => {
-      if (deletar) {
-         //this.setState({ showModalConfirmaDelete: false });
-      } else {
-         //this.setState({ showModalConfirmaDelete: false });
-      }
-      this.setState({ showModalConfirmaDelete: false });
-   };
-
    excluirPedidoHandler = (item) => {
-      this.setState({ pedido: item, showModalConfirmaDelete: true });
+      this.setState({ showProgress: true });
+      axios
+         .delete(`${API_ROOT}pedido/deletar/${item.id}`, REQUEST_HEADERS)
+         .then((response) => {
+            this.setState({ showProgress: false });
+            if (response.status === 200) {
+               this.carregarPedidosCadastrados();
+            }
+         })
+         .catch((error) => {
+            this.setState({ showProgress: false });
+            console.error("ERRO GERAL", error.response);
+         });
    };
 
    render() {

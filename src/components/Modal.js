@@ -17,11 +17,6 @@ class Modal extends Component {
          endingTop: "10%",
       };
       M.Modal.init(this.Modal, options);
-      // If you want to work on instance of the Modal then you can use the below code snippet
-      // let instance = M.Modal.getInstance(this.Modal);
-      // instance.open();
-      // instance.close();
-      // instance.destroy();
    }
 
    render() {
@@ -41,9 +36,7 @@ class Modal extends Component {
                <div className="modal-footer">
                   <button
                      data-target="modal1"
-                     onClick={(e) => {
-                        console.log("Cancelar");
-                     }}
+                     onClick={(e) => {}}
                      className="modal-close waves-effect waves-light btn btn-flat red white-text">
                      Cancelar
                   </button>
@@ -51,7 +44,7 @@ class Modal extends Component {
                   <button
                      style={{ marginLeft: 10 }}
                      onClick={(e) => {
-                        this.props.excluirPedidoHandler();
+                        this.props.botaoConfirmarHandler();
                      }}
                      className="modal-close waves-effect waves-light btn btn-flat green white-text">
                      Confirmar
