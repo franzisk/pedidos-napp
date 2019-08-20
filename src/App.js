@@ -2,7 +2,6 @@ import React from "react";
 import Pedido from "./components/Pedido/Pedido";
 import Home from "./components/Home/Home";
 import Header from "./components/Header/Header";
-
 import axios from "axios";
 import "materialize-css/dist/css/materialize.min.css";
 
