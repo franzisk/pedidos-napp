@@ -104,7 +104,9 @@ class Home extends React.Component {
          <div itemID="box-containner">
             <Modal
                titulo={
-                  this.state.pedido === null ? "" : "Pedido No." + pedido.id
+                  this.state.pedido === null
+                     ? ""
+                     : "Pedido No." + this.state.pedido.id
                }
                conteudo={this.state.conteudoModal}
                botaoConfirmarHandler={() => excluirPedidoHandler(pedido)}
