@@ -21,9 +21,8 @@ class Header extends React.Component {
          <img
             src={logo}
             style={{
-               maxWidth: 100,
-               maxHeight: 100,
-               marginTop: 16,
+               maxWidth: 160,
+               marginTop: 12,
                marginLeft: 10,
             }}
          />

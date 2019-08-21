@@ -411,10 +411,26 @@ class App extends React.Component {
       this.carregarPedidosCadastrados();
       this.carregarClientesCadastrados();
       this.carregarProdutosCadastrados();
+
+      // Set axios interceptors
+      this.requestInterceptor = axios.interceptors.request.use(req => {
+        this.setState({ error: null });
+        return req;
+      });
+
+      this.responseInterceptor = axios.interceptors.response.use(
+        res => res,
+        error => {
+          alert('Error happened');
+          this.setState({ error });
+        }
+      );
    }
 
    componentWillUnmount() {
       this._isMounted = false;
+      axios.interceptors.request.eject(this.requestInterceptor);
+      axios.interceptors.response.eject(this.responseInterceptor);
    }
 
    // excluir um pedido na API
